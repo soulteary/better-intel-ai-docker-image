@@ -1,0 +1,3 @@
+FROM intel/deep-learning-essentials:2025.0.2-0-devel-ubuntu24.04
+LABEL maintainer="soulteary <soulteary@gmail.com>"
+LABEL description="Dockerfile for Intel GPU based deep learning development environment."
