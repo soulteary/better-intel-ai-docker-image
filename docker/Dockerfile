@@ -41,6 +41,7 @@ RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then \
 # Remove breaks install packages
 RUN apt-get remove -y libze-dev libze-intel-gpu1
 
+# Intel GPU OpenCL Driver and Intel GPU Compute Runtime
 # https://github.com/intel/compute-runtime/releases/tag/24.52.32224.5
 WORKDIR /tmp/neo
 RUN curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.5.6/intel-igc-core-2_2.5.6+18417_amd64.deb && \
@@ -62,3 +63,12 @@ RUN curl -LO https://github.com/oneapi-src/level-zero/releases/download/v1.20.2/
     curl -LO https://github.com/oneapi-src/level-zero/releases/download/v1.20.2/level-zero-devel_1.20.2+u24.04_amd64.deb && \
     dpkg -i *.deb && \
     rm -rf *.deb
+
+# Intel GPU PyTorch Environment
+RUN conda install python=3.11 -y
+ENV PIP_ROOT_USER_ACTION=ignore
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=true
+RUN pip install --pre --upgrade ipex-llm[xpu_arc]==2.2.0b20250205 --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/ && \
+    pip install --pre pytorch-triton-xpu==3.2.0+gite98b6fcb --index-url https://download.pytorch.org/whl/nightly/xpu && \
+    rm -Rf /root/.cache/pip
