@@ -3,10 +3,41 @@ LABEL maintainer="soulteary <soulteary@gmail.com>"
 LABEL description="Dockerfile for Intel GPU based deep learning development environment."
 
 ARG USE_CHINA_MIRROR=false
+ENV USE_CHINA_MIRROR=$USE_CHINA_MIRROR
 
+# Set up the mirror for Ubuntu
 RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then \
         sed -i 's/\(archive\|security\).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/ubuntu.sources; \
     fi
+# Install the necessary packages
 RUN apt-get update && apt upgrade -y && \
     apt-get install -y --no-install-recommends clinfo && \
     rm -rf /var/lib/apt/lists/*
+
+# Install the necessary Python installer
+# https://soulteary.com/2022/12/09/use-docker-to-quickly-get-started-with-the-chinese-stable-diffusion-model-taiyi.html
+ENV PATH="/root/miniconda3/bin:${PATH}"
+ENV CONDA_URL=https://repo.anaconda.com/miniconda/
+ENV CONDA_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/
+RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then CONDA_URL=$CONDA_MIRROR; fi; \
+    curl -LO $CONDA_URL/Miniconda3-latest-Linux-x86_64.sh && \
+    mkdir /root/.conda && \
+    bash Miniconda3-latest-Linux-x86_64.sh -b && \
+    rm -f Miniconda3-latest-Linux-x86_64.sh
+
+# https://soulteary.com/2025/01/17/guide-to-setting-up-ubuntu-24-04-basic-development-environment.html
+RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then \
+        conda config --set show_channel_urls true && \
+        conda config --remove-key channels && \
+        conda config --add channels defaults && \
+        conda config --add default_channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2 && \
+        conda config --add default_channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r && \
+        conda config --add default_channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
+        ( echo "custom_channels:" >> ~/.condarc ) && \
+        ( echo "  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud" >> ~/.condarc ) && \
+        ( echo "  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud" >> ~/.condarc ); \
+    fi
+
+
+
+
