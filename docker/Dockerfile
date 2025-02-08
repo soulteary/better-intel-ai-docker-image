@@ -19,7 +19,7 @@ RUN apt-get update && apt upgrade -y && \
 ENV PATH="/root/miniconda3/bin:${PATH}"
 ENV CONDA_URL=https://repo.anaconda.com/miniconda/
 ENV CONDA_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/
-RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then CONDA_URL=$CONDA_MIRROR; fi; \
+RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then export CONDA_URL=$CONDA_MIRROR; fi; \
     curl -LO $CONDA_URL/Miniconda3-latest-Linux-x86_64.sh && \
     mkdir /root/.conda && \
     bash Miniconda3-latest-Linux-x86_64.sh -b && \
@@ -69,6 +69,12 @@ RUN conda install python=3.11 -y
 ENV PIP_ROOT_USER_ACTION=ignore
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=true
-RUN pip install --pre --upgrade ipex-llm[xpu_arc]==2.2.0b20250205 --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/ && \
-    pip install --pre pytorch-triton-xpu==3.2.0+gite98b6fcb --index-url https://download.pytorch.org/whl/nightly/xpu && \
+ENV IPEX_LLM_URL=https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+ENV IPEX_LLM_MIRROR=https://pytorch-extension.intel.com/release-whl/stable/xpu/cn/
+ENV PYTORCH_TRITON_XPU_URL=https://download.pytorch.org/whl/nightly/xpu
+ENV PYTORCH_TRITON_XPU_MIRROR=https://mirror.sjtu.edu.cn/pytorch-wheels/nightly/xpu
+RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then export IPEX_LLM_URL=$IPEX_LLM_MIRROR; fi; \
+    if [ "$PYTORCH_TRITON_XPU_URL" = "true" ]; then export PYTORCH_TRITON_XPU_URL=$PYTORCH_TRITON_XPU_MIRROR; fi; \
+    pip install --pre --upgrade ipex-llm[xpu_arc]==2.2.0b20250205 --extra-index-url $IPEX_LLM_URL && \
+    pip install --pre pytorch-triton-xpu==3.2.0+gite98b6fcb --index-url $PYTORCH_TRITON_XPU_URL && \
     rm -Rf /root/.cache/pip
