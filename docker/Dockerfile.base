@@ -1,3 +1,12 @@
 FROM intel/deep-learning-essentials:2025.0.2-0-devel-ubuntu24.04
 LABEL maintainer="soulteary <soulteary@gmail.com>"
 LABEL description="Dockerfile for Intel GPU based deep learning development environment."
+
+ARG USE_CHINA_MIRROR=false
+
+RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then \
+        sed -i 's/\(archive\|security\).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/ubuntu.sources; \
+    fi
+RUN apt-get update && apt upgrade -y && \
+    apt-get install -y --no-install-recommends clinfo && \
+    rm -rf /var/lib/apt/lists/*
