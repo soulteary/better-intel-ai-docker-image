@@ -86,3 +86,9 @@ RUN rm /root/miniconda3/lib/libstdc++.so.6 && \
     ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33 /root/miniconda3/lib/libstdc++.so.6 && \
     ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33 /root/miniconda3/lib/libstdc++.so.6.0.29 && \
     ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33 /root/miniconda3/lib/libstdc++.so
+
+# Fix Intel IPEX LLM errors and warnings
+RUN apt-get update && apt-get install -y --no-install-recommends libpng16-16 libjpeg-turbo8 libaio-dev && \
+    rm -rf /var/lib/apt/lists/* && \    
+    pip install -U transformers && \
+    pip install 'accelerate>=0.26.0'
