@@ -78,3 +78,11 @@ RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then export IPEX_LLM_URL=$IPEX_LLM_MIRR
     pip install --pre --upgrade ipex-llm[xpu_arc]==2.2.0b20250205 --extra-index-url $IPEX_LLM_URL && \
     pip install --pre pytorch-triton-xpu==3.2.0+gite98b6fcb --index-url $PYTORCH_TRITON_XPU_URL && \
     rm -Rf /root/.cache/pip
+
+# Fix conda libc++ errors
+RUN rm /root/miniconda3/lib/libstdc++.so.6 && \
+    rm /root/miniconda3/lib/libstdc++.so.6.0.29 && \
+    rm /root/miniconda3/lib/libstdc++.so && \
+    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33 /root/miniconda3/lib/libstdc++.so.6 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33 /root/miniconda3/lib/libstdc++.so.6.0.29 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33 /root/miniconda3/lib/libstdc++.so
