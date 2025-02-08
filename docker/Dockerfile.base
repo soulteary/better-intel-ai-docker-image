@@ -38,6 +38,5 @@ RUN if [ "$USE_CHINA_MIRROR" = "true" ]; then \
         ( echo "  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud" >> ~/.condarc ); \
     fi
 
-
-
-
+# Remove breaks install packages
+RUN apt-get remove -y libze-dev libze-intel-gpu1
