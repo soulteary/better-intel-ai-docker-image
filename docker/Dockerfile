@@ -92,3 +92,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends libpng16-16 lib
     rm -rf /var/lib/apt/lists/* && \    
     pip install -U transformers && \
     pip install 'accelerate>=0.26.0'
+
+WORKDIR /llm
