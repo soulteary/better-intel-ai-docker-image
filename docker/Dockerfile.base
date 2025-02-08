@@ -54,3 +54,11 @@ RUN curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/
     sha256sum -c ww52.sum && \
     dpkg -i *.deb && \
     rm -rf *
+
+# oneAPI Level Zero Loader
+# https://github.com/oneapi-src/level-zero/releases/tag/v1.20.2
+WORKDIR /tmp/level-zero
+RUN curl -LO https://github.com/oneapi-src/level-zero/releases/download/v1.20.2/level-zero_1.20.2+u24.04_amd64.deb && \
+    curl -LO https://github.com/oneapi-src/level-zero/releases/download/v1.20.2/level-zero-devel_1.20.2+u24.04_amd64.deb && \
+    dpkg -i *.deb && \
+    rm -rf *.deb
